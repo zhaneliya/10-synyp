@@ -4,10 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Идентификация және Аутентификация - Онлайн Тест</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+        body { 
+            -webkit-user-select: none; 
+            -moz-user-select: none; 
+            -ms-user-select: none; 
+            user-select: none; 
+        }
     </style>
 </head>
 <body class="bg-slate-100 min-h-screen text-slate-800 font-sans flex flex-col justify-between">
@@ -22,7 +29,7 @@
                     <p class="text-xs text-slate-400">Идентификация және Аутентификация</p>
                 </div>
             </div>
-            <button id="openSettingsBtn" class="text-slate-400 hover:text-white p-2 rounded-lg hover:bg-slate-800 transition">
+            <button id="openSettingsBtn" type="button" class="text-slate-400 hover:text-white p-2 rounded-lg hover:bg-slate-800 transition">
                 <i class="fa-solid fa-gear text-xl"></i>
             </button>
         </div>
@@ -62,7 +69,7 @@
                     <p>• Нәтиже автоматты түрде оқытушы базасына жіберіледі.</p>
                 </div>
 
-                <button type="button" onclick="startQuiz()" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-cyan-600/30 transition transform active:scale-95 flex items-center justify-center space-x-2">
+                <button id="startTestBtn" type="button" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-cyan-600/30 transition transform active:scale-95 flex items-center justify-center space-x-2">
                     <span>Тестті Бастау</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </button>
@@ -88,18 +95,18 @@
             <!-- Question Card -->
             <div class="bg-white rounded-2xl shadow-xl border border-slate-200 p-6 md:p-8 transition-all">
                 <h3 id="questionText" class="text-lg md:text-xl font-bold text-slate-800 mb-6 leading-snug">
-                    <!-- Question text here -->
+                    <!-- Question text injected dynamically -->
                 </h3>
 
                 <div id="optionsContainer" class="space-y-3">
-                    <!-- Options buttons inserted dynamically -->
+                    <!-- Options buttons injected dynamically -->
                 </div>
 
                 <div class="mt-8 pt-4 border-t border-slate-100 flex justify-between items-center">
-                    <button id="prevBtn" onclick="navigateQuestion(-1)" class="px-4 py-2 text-slate-500 hover:text-slate-800 font-semibold text-sm rounded-lg hover:bg-slate-100 transition disabled:opacity-30 disabled:cursor-not-allowed">
+                    <button id="prevBtn" type="button" onclick="navigateQuestion(-1)" class="px-4 py-2 text-slate-500 hover:text-slate-800 font-semibold text-sm rounded-lg hover:bg-slate-100 transition disabled:opacity-30 disabled:cursor-not-allowed">
                         <i class="fa-solid fa-chevron-left mr-1"></i> Алдыңғы
                     </button>
-                    <button id="nextBtn" onclick="navigateQuestion(1)" class="px-6 py-2.5 bg-cyan-600 hover:bg-cyan-700 text-white font-bold text-sm rounded-xl shadow transition flex items-center">
+                    <button id="nextBtn" type="button" onclick="navigateQuestion(1)" class="px-6 py-2.5 bg-cyan-600 hover:bg-cyan-700 text-white font-bold text-sm rounded-xl shadow transition flex items-center">
                         Келесі <i class="fa-solid fa-chevron-right ml-1"></i>
                     </button>
                 </div>
@@ -133,3 +140,391 @@
             <!-- Sync Status Banner -->
             <div id="syncStatus" class="p-3 rounded-xl text-xs font-medium mb-6 flex items-center justify-center space-x-2 bg-amber-50 text-amber-700 border border-amber-200">
                 <i class="fa-solid fa-circle-notch fa-spin"></i>
+                <span>Деректер Google Кестеге жіберілуде...</span>
+            </div>
+
+            <!-- Review Answers Section -->
+            <div class="text-left border-t border-slate-200 pt-6">
+                <h4 class="font-bold text-slate-800 mb-3"><i class="fa-solid fa-list-check text-cyan-600 mr-2"></i> Жауаптарды Талдау</h4>
+                <div id="reviewContainer" class="space-y-3 max-h-80 overflow-y-auto pr-1">
+                    <!-- Dynamic review items -->
+                </div>
+            </div>
+
+            <button type="button" onclick="location.reload()" class="mt-6 w-full py-3 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl transition">
+                Қайта тапсыру
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-slate-800 text-lg flex items-center">
+                    <i class="fa-solid fa-database text-cyan-600 mr-2"></i> База Баптаулары
+                </h3>
+                <button type="button" onclick="closeSettings()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            
+            <p class="text-xs text-slate-500 mb-3">Google Apps Script арқылы алынған Web App URL сілтемесін орнатыңыз:</p>
+            <input type="text" id="scriptUrlInput" placeholder="https://script.google.com/macros/s/.../exec" 
+                class="w-full p-3 border border-slate-300 rounded-xl text-xs font-mono mb-4 focus:ring-2 focus:ring-cyan-500 outline-none">
+
+            <div class="flex space-x-2">
+                <button type="button" onclick="saveSettings()" class="flex-1 bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2.5 rounded-xl text-sm transition">
+                    Сақтау
+                </button>
+                <button type="button" onclick="closeSettings()" class="px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-xl text-sm transition">
+                    Жабу
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Default Google Apps Script URL
+        let SCRIPT_URL = localStorage.getItem('proctoring_script_url') || 'https://script.google.com/macros/s/AKfycbz_KXcBnldRH6_AYrQrt-VucnNX7It4z_B3gQ5sUuvIPnNJQp8w3UtytX9cpm4rfEUUAw/exec';
+
+        // Quiz Questions Data (10 Questions on Identification & Authentication)
+        const quizData = [
+            {
+                question: "Пайдаланушының өзін белгілі бір деректер арқылы «кім екенін мәлімдеуі» қалай аталады?",
+                options: ["Аутентификация", "Идентификация", "Авторизация", "Биометрия"],
+                correct: 1,
+                explain: "Идентификация — бұл пайдаланушының жүйеге өзінің кім екенін хабарлауы немесе мәлімдеуі (мысалы, логин немесе ЖСН енгізу)."
+            },
+            {
+                question: "Адамның немесе жүйе пайдаланушысының өзі мәлімдеген тұлға екенін ТЕКСЕРУ процесі қалай аталады?",
+                options: ["Идентификация", "Шифрлау", "Аутентификация", "Индексация"],
+                correct: 2,
+                explain: "Аутентификация — пайдаланушының расымен де өзі мәлімдеген тұлға екенін тексеру тәсілі (мысалы, құпиясөз енгізу)."
+            },
+            {
+                question: "Пайдаланушы білетін құпия ақпаратқа негізделген әдіске не жатады?",
+                options: ["Саусақ ізі", "Құпиясөз және PIN-код", "Жеке куәлік", "Қауіпсіздік токені"],
+                correct: 1,
+                explain: "Білімге негізделген әдіс — тек пайдаланушының жадында сақталған құпия ақпараттарды (Құпиясөз, PIN-код) қамтиды."
+            },
+            {
+                question: "Иелікке негізделген идентификациялау әдісіне мыналардың қайсысы жатады?",
+                options: ["Бет-әлпетті тану", "ЖСН (ИИН)", "Ұялы телефон және Қауіпсіздік токені", "Құпиясөз"],
+                correct: 2,
+                explain: "Иелікке негізделген әдіс — пайдаланушының меншігіндегі немесе қолындағы физикалық құрылғылар (телефон, токен)."
+            },
+            {
+                question: "Саусақ ізі мен бет-әлпетті тану арқылы тексеру қай әдіске жатады?",
+                options: ["Биометриялық әдіс", "Білімге негізделген әдіс", "Иелікке негізделген әдіс", "Құжаттарға негізделген әдіс"],
+                correct: 0,
+                explain: "Биометриялық әдіс — адамның бірегей физикалық немесе мінез-құлықтық ерекшеліктеріне негізделеді."
+            },
+            {
+                question: "Құжаттар мен цифрлық деректерге негізделген әдістің мысалын көрсетіңіз:",
+                options: ["PIN-код", "Электрондық цифрлық қолтаңба (ЭЦҚ) және ЖСН", "Саусақ ізі", "Қауіпсіздік токені"],
+                correct: 1,
+                explain: "Құжаттар мен цифрлық сәйкестендіргіштерге: Жеке куәлік, ЖСН және ЭЦҚ (ЭЦП) жатады."
+            },
+            {
+                question: "Идентификация мен аутентификацияның басты айырмашылығы неде?",
+                options: [
+                    "Айырмашылығы жоқ, екеуі синоним сөздер",
+                    "Идентификация — кім екенін мәлімдеу, аутентификация — оның растығын тексеру",
+                    "Аутентификация логин енгізуді, ал идентификация құпиясөзді тексереді",
+                    "Идентификация тек биометриямен жұмыс істейді"
+                ],
+                correct: 1,
+                explain: "Идентификация — пайдаланушы кім екенін айтады (логин), ал аутентификация оны растайды (құпиясөз)."
+            },
+            {
+                question: "Жүйеге аты-жөнді немесе логинді енгізу әрекеті қай түсінікке жатады?",
+                options: ["Аутентификация", "Авторизация", "Идентификация", "Бұғаттау"],
+                correct: 2,
+                explain: "Жүйеге логин немесе аты-жөнді енгізу — бұл идентификация (өзін таныстыру)."
+            },
+            {
+                question: "Жүйеге құпиясөзді (password) енгізіп растау қай түсінікке жатады?",
+                options: ["Идентификация", "Аутентификация", "Дедупликация", "Индексация"],
+                correct: 1,
+                explain: "Құпиясөз арқылы енгізілген мәліметтерді тексеру — бұл аутентификация (растау)."
+            },
+            {
+                question: "ЭЦҚ (Электрондық цифрлық қолтаңба) және ЖСН арқылы анықтау қай әдіске мысал болады?",
+                options: ["Иелікке негізделген", "Биометриялық", "Құжаттар мен цифрлық деректерге негізделген", "Тек білімге негізделген"],
+                correct: 2,
+                explain: "ЖСН және ЭЦҚ цифрлық құжаттар мен цифрлық сәйкестендіргіштер саналады."
+            }
+        ];
+
+        // State Variables
+        let userData = { fullName: '', userCode: '' };
+        let userAnswers = new Array(quizData.length).fill(null);
+        let currentQuestion = 0;
+        let silentViolations = 0;
+        let timerSeconds = 0;
+        let timerInterval = null;
+
+        // SILENT PROCTORING (Invisible background tracking)
+        function initSilentProctoring() {
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) silentViolations++;
+            });
+            window.addEventListener('blur', () => {
+                silentViolations++;
+            });
+            document.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                silentViolations++;
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.ctrlKey && (e.key === 'c' || e.key === 'v' || e.key === 'u' || e.key === 'a')) {
+                    e.preventDefault();
+                    silentViolations++;
+                }
+            });
+            document.addEventListener('copy', (e) => {
+                e.preventDefault();
+                silentViolations++;
+            });
+        }
+
+        // Start Quiz Function
+        function startQuiz() {
+            const fullNameVal = document.getElementById('inputFullName').value.trim();
+            const userCodeVal = document.getElementById('inputUserCode').value.trim();
+
+            let hasError = false;
+
+            if (!fullNameVal) {
+                document.getElementById('errFullName').classList.remove('hidden');
+                hasError = true;
+            } else {
+                document.getElementById('errFullName').classList.add('hidden');
+            }
+
+            if (!userCodeVal) {
+                document.getElementById('errUserCode').classList.remove('hidden');
+                hasError = true;
+            } else {
+                document.getElementById('errUserCode').classList.add('hidden');
+            }
+
+            if (hasError) return;
+
+            userData.fullName = fullNameVal;
+            userData.userCode = userCodeVal;
+
+            // Direct DOM style toggle to avoid Tailwind transition lockups
+            const regEl = document.getElementById('step-register');
+            const quizEl = document.getElementById('step-quiz');
+
+            regEl.style.display = 'none';
+            quizEl.style.display = 'block';
+            quizEl.classList.remove('hidden');
+
+            document.getElementById('userNameDisplay').innerText = userData.fullName;
+
+            initSilentProctoring();
+            startTimer();
+            renderQuestion();
+        }
+
+        // Timer Function
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timerSeconds++;
+                const mins = String(Math.floor(timerSeconds / 60)).padStart(2, '0');
+                const secs = String(timerSeconds % 60).padStart(2, '0');
+                document.getElementById('timerText').innerText = `${mins}:${secs}`;
+            }, 1000);
+        }
+
+        // Render Current Question
+        function renderQuestion() {
+            const q = quizData[currentQuestion];
+            document.getElementById('currentQNum').innerText = currentQuestion + 1;
+            document.getElementById('totalQNum').innerText = quizData.length;
+            document.getElementById('questionText').innerText = q.question;
+
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                const isSelected = userAnswers[currentQuestion] === idx;
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = `w-full text-left p-4 rounded-xl border transition flex items-center justify-between ${
+                    isSelected 
+                    ? 'border-cyan-600 bg-cyan-50/70 text-cyan-900 font-semibold ring-2 ring-cyan-600/20' 
+                    : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-700'
+                }`;
+                btn.onclick = () => selectOption(idx);
+
+                btn.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <span class="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold ${
+                            isSelected ? 'bg-cyan-600 text-white' : 'bg-slate-100 text-slate-600'
+                        }">${String.fromCharCode(65 + idx)}</span>
+                        <span class="text-sm md:text-base">${opt}</span>
+                    </div>
+                    ${isSelected ? '<i class="fa-solid fa-circle-check text-cyan-600 text-lg"></i>' : ''}
+                `;
+                optionsContainer.appendChild(btn);
+            });
+
+            document.getElementById('prevBtn').disabled = currentQuestion === 0;
+            const nextBtn = document.getElementById('nextBtn');
+            if (currentQuestion === quizData.length - 1) {
+                nextBtn.innerHTML = 'Аяқтау <i class="fa-solid fa-check ml-1"></i>';
+                nextBtn.className = "px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl shadow transition flex items-center";
+            } else {
+                nextBtn.innerHTML = 'Келесі <i class="fa-solid fa-chevron-right ml-1"></i>';
+                nextBtn.className = "px-6 py-2.5 bg-cyan-600 hover:bg-cyan-700 text-white font-bold text-sm rounded-xl shadow transition flex items-center";
+            }
+        }
+
+        function selectOption(index) {
+            userAnswers[currentQuestion] = index;
+            renderQuestion();
+        }
+
+        function navigateQuestion(direction) {
+            if (direction === 1 && currentQuestion === quizData.length - 1) {
+                finishQuiz();
+                return;
+            }
+            currentQuestion += direction;
+            renderQuestion();
+        }
+
+        // Finish Quiz & Submit
+        function finishQuiz() {
+            clearInterval(timerInterval);
+
+            let score = 0;
+            userAnswers.forEach((ans, idx) => {
+                if (ans === quizData[idx].correct) score++;
+            });
+
+            const percentage = Math.round((score / quizData.length) * 100);
+            const formattedTime = document.getElementById('timerText').innerText;
+
+            const quizEl = document.getElementById('step-quiz');
+            const resultEl = document.getElementById('step-result');
+
+            quizEl.style.display = 'none';
+            resultEl.style.display = 'block';
+            resultEl.classList.remove('hidden');
+
+            document.getElementById('resScore').innerText = `${score} / ${quizData.length}`;
+            document.getElementById('resPercentage').innerText = `${percentage}%`;
+            document.getElementById('resTime').innerText = formattedTime;
+
+            const badge = document.getElementById('resultBadge');
+            if (percentage >= 70) {
+                badge.className = "w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl bg-emerald-100 text-emerald-600";
+                badge.innerHTML = '<i class="fa-solid fa-trophy"></i>';
+            } else {
+                badge.className = "w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl bg-amber-100 text-amber-600";
+                badge.innerHTML = '<i class="fa-solid fa-award"></i>';
+            }
+
+            renderReview();
+
+            const payload = {
+                fullName: userData.fullName,
+                userCode: userData.userCode,
+                score: score,
+                total: quizData.length,
+                percentage: percentage,
+                timeSpent: formattedTime,
+                violations: silentViolations,
+                timestamp: new Date().toLocaleString('kk-KZ')
+            };
+
+            sendToGoogleSheets(payload);
+        }
+
+        function sendToGoogleSheets(data) {
+            const syncStatus = document.getElementById('syncStatus');
+            if (!SCRIPT_URL) {
+                syncStatus.className = "p-3 rounded-xl text-xs font-medium mb-6 flex items-center justify-center space-x-2 bg-slate-100 text-slate-600";
+                syncStatus.innerHTML = '<i class="fa-solid fa-info-circle"></i><span>Google Sheets сілтемесі орнатылмаған.</span>';
+                return;
+            }
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(() => {
+                syncStatus.className = "p-3 rounded-xl text-xs font-medium mb-6 flex items-center justify-center space-x-2 bg-emerald-50 text-emerald-700 border border-emerald-200";
+                syncStatus.innerHTML = '<i class="fa-solid fa-cloud-arrow-up text-base"></i><span>Нәтиже оқытушы базасына (Google Кестеге) сәтті түсті!</span>';
+            })
+            .catch(() => {
+                syncStatus.className = "p-3 rounded-xl text-xs font-medium mb-6 flex items-center justify-center space-x-2 bg-rose-50 text-rose-700 border border-rose-200";
+                syncStatus.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i><span>Жіберу қатесі орын алды.</span>';
+            });
+        }
+
+        function renderReview() {
+            const container = document.getElementById('reviewContainer');
+            container.innerHTML = '';
+
+            quizData.forEach((q, idx) => {
+                const userAns = userAnswers[idx];
+                const isCorrect = userAns === q.correct;
+
+                const item = document.createElement('div');
+                item.className = `p-4 rounded-xl border text-xs space-y-1 ${
+                    isCorrect ? 'bg-emerald-50/50 border-emerald-200' : 'bg-rose-50/50 border-rose-200'
+                }`;
+
+                item.innerHTML = `
+                    <div class="font-bold text-slate-800">${idx + 1}. ${q.question}</div>
+                    <div class="${isCorrect ? 'text-emerald-700 font-semibold' : 'text-rose-700'}">
+                        Сіздің жауабыңыз: ${userAns !== null ? q.options[userAns] : 'Жауап берілмеді'}
+                    </div>
+                    ${!isCorrect ? `<div class="text-emerald-700 font-semibold">Дұрыс жауап: ${q.options[q.correct]}</div>` : ''}
+                    <div class="text-slate-500 pt-1 italic border-t border-slate-200/60 mt-1">${q.explain}</div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // Event Listeners initialization
+        window.addEventListener('DOMContentLoaded', () => {
+            const startBtn = document.getElementById('startTestBtn');
+            if (startBtn) {
+                startBtn.addEventListener('click', startQuiz);
+            }
+
+            document.getElementById('openSettingsBtn').onclick = () => {
+                document.getElementById('scriptUrlInput').value = SCRIPT_URL;
+                document.getElementById('settingsModal').classList.remove('hidden');
+            };
+        });
+
+        function closeSettings() {
+            document.getElementById('settingsModal').classList.add('hidden');
+        }
+
+        function saveSettings() {
+            const url = document.getElementById('scriptUrlInput').value.trim();
+            SCRIPT_URL = url;
+            localStorage.setItem('proctoring_script_url', url);
+            closeSettings();
+        }
+    </script>
+</body>
+</html>
+```
+
+### Не түзетілді?
+1. **Тіркеу және Өту Логикасы Түзетілді:** «Тестті Бастау» батырмасы тікелей DOM стильдерін басқару (`display: none` / `display: block`) арқылы сұрақтар бетіне ешқандай кедергісіз, бірден өтетін болды.
+2. **Арнайы Тексерулер Еңгізілді:** Пайдаланушы Аты-Жөні немесе ЖСН/Топ өрісін бос қалдырса, қызыл ескерту шығады.
+3. **10 Тақырыптық Сұрақ Толық Орнатылды:** Идентификация мен Аутентификация, білімге/иелікке/биометрияға/құжаттарға негізделген әдістер мен ЭЦҚ сұрақтары толық қамтылды.
+4. **Google Apps Script Жіберу:** Сіз берген сілтеме әдепкі ретте сақталды. Тест соңында нәтиже автоматты түрде кестеңізге жіберіледі.
